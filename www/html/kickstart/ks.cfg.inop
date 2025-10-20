@@ -1,0 +1,86 @@
+# ====== Rocky 10 Kickstart (PXE HTTP repo on 192.168.121.21) ======
+
+# Locales, time, keyboard
+lang en_US.UTF-8
+keyboard us
+timezone UTC --utc
+
+# Networking: DHCP on first active NIC; set hostname (or leave to DHCP)
+network --bootproto=dhcp --device=link --activate
+# If you prefer to let DHCP set hostname, comment the next line:
+network --hostname=pxe-node.lab.mcmahon.home
+
+# Auth & users
+rootpw --iscrypted $6$zLjgP0oCBqj119D4$D0QTtlI1ug8ijvslnjE7SE5RLT7e6jKL87OyZg8en8x1Pt.6JHHAN2BMO8CDY7l50/bcPJRaHlpTT9bKS9sfT.
+user --name=localuser --gecos="localuser" --groups=wheel --iscrypted --password=$6$obEHmwukkDFSfDDy$JenZ/KBmLMwnLgM8mARRN2zrCZCBJsoDrMxyrCHrdkcGK/B4W8L1DyIB5.M9S.UPD5JJGiWr9Jt9xsC4v6y9H0
+# Passwordless sudo for wheel (optional)
+%post --erroronfail
+echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/00-wheel-nopasswd
+chmod 440 /etc/sudoers.d/00-wheel-nopasswd
+%end
+
+# Security & boot
+selinux --enforcing
+firewall --enabled --service=ssh
+services --enabled=sshd,chronyd,NetworkManager
+
+# Disk
+zerombr
+clearpart --all --initlabel
+autopart --type=lvm
+
+# Reboot after install
+reboot
+
+# Installation source:
+# You pass inst.repo via PXE (APPEND ... inst.repo=http://192.168.121.21/rocky/10/),
+# so no 'url' here is required. If you want to hard-code:
+# url --url="http://192.168.121.21/rocky/10/"
+
+# Packages (lean, but with tools we need)
+%packages
+@^minimal-environment
+bash-completion
+vim-enhanced
+curl
+wget
+git
+ansible-core
+python3
+%end
+
+# Post-install: point dnf to your local mirror + run Ansible playbook if present
+%post --log=/root/ks-post.log --erroronfail
+set -euxo pipefail
+
+# Optional: add a local repo file so future installs/updates use your infra box
+cat > /etc/yum.repos.d/lab-local.repo <<REPO
+[lab-baseos]
+name=Lab BaseOS
+baseurl=http://192.168.121.21/rocky/10/BaseOS/x86_64/os/
+enabled=1
+gpgcheck=0
+
+[lab-appstream]
+name=Lab AppStream
+baseurl=http://192.168.121.21/rocky/10/AppStream/x86_64/os/
+enabled=1
+gpgcheck=0
+REPO
+
+dnf -y makecache
+
+# If you publish a site playbook at /kickstart/site.yml, run it now
+if curl -fsS -o /root/site.yml http://192.168.121.21/kickstart/site.yml ; then
+  # Use ansible-local (no controller required)
+  ansible-playbook /root/site.yml || true
+fi
+
+# Friendly MOTD so you know it was imaged by PXE
+cat > /etc/motd <<'MOTD'
+Provisioned via PXE/Kickstart from 192.168.121.21
+Repo: http://192.168.121.21/rocky/10/
+MOTD
+%end
+
+

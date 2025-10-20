@@ -41,5 +41,8 @@ secrets/
 *.secret
 
 # PXE boot binaries
+# PXE root binaries
+www/html/pxe/initrd.img
+www/html/pxe/vmlinuz
 **/images/pxeboot/initrd.img
 **/images/pxeboot/vmlinuz

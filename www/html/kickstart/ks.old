@@ -1,0 +1,13 @@
+# Minimal Kickstart (adjust for Rocky/Alma/RHEL installer later)
+lang en_US
+keyboard us
+network --bootproto=dhcp
+rootpw  --plaintext lab
+timezone UTC --utc
+zerombr
+clearpart --all --initlabel
+autopart --type=lvm
+reboot
+%packages
+@^minimal-environment
+%end

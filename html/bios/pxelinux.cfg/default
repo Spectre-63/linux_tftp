@@ -1,0 +1,8 @@
+DEFAULT install
+PROMPT 0
+TIMEOUT 50
+
+LABEL install
+  KERNEL ../rocky/10/images/pxeboot/vmlinuz
+  APPEND initrd=../rocky/10/images/pxeboot/initrd.img ip=dhcp rd.neednet=1 rd.driver.pre=tulip rd.driver.pre=pcnet32 rd.driver.pre=hv_vmbus rd.driver.pre=hv_netvsc rd.driver.pre=hv_storvsc inst.ks.device=link inst.stage2=http://192.168.121.21/rocky/10/BaseOS/x86_64/os/ inst.ks=http://192.168.121.21/kickstart/ks.cfg inst.repo=http://192.168.121.21/rocky/10/
+

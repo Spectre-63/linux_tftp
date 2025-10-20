@@ -1,0 +1,58 @@
+---
+## ✅ **`.gitignore`**
+
+```gitignore
+
+# OS / Editor Files
+*.swp
+*.swo
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Shell history / temp logs
+*.log
+*.history
+nohup.out
+
+# Python / Ansible caches (future)
+__pycache__/
+*.retry
+
+# Local overrides
+.env.local
+*.local
+
+# ISO images and large assets
+*.iso
+/home/*/iso/
+iso/
+
+# Generated artifacts
+*.mount
+*.automount
+
+# Rsync exclusion files
+.rsync-exclude
+
+# Optional secret config
+secrets/
+*.secret
+````
+
+---
+
+### 🧩 Next Steps
+
+Once you finish `git init`, just:
+
+```bash
+cd ~/src/linux_tftp
+git add README.md .gitignore ops env.conf kea system tftpboot www
+git commit -m "Initial commit — Linux TFTP lab automation baseline"
+```
+
+---
+
+Would you like me to generate a short **`docs/` reference stub** next (with examples of each script’s expected output and troubleshooting notes)? It’d serve as the foundation for project documentation on GitHub.

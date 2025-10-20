@@ -1,0 +1,13 @@
+DEFAULT menu.c32
+PROMPT 0
+TIMEOUT 100
+ONTIMEOUT local
+MENU TITLE PXE Boot Menu
+
+LABEL Local Boot
+  MENU DEFAULT
+  LOCALBOOT 0
+
+LABEL Install Rocky 10 (Local Full Repo)
+  KERNEL vmlinuz
+  APPEND ip=dhcp inst.stage2=http://192.168.121.21/rocky/10/ inst.repo=http://192.168.121.21/rocky/10/ inst.ks=http://192.168.121.21/kickstart/ks.cfg inst.ks.sendmac inst.ks.device=link inst.loglevel=debug inst.debug inst.syslog=192.168.121.21:514 rd.shell rd.break

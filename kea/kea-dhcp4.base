@@ -1,0 +1,43 @@
+{
+# DHCPv4 configuration starts on the next line
+"Dhcp4": {
+
+# First we set up global values
+    "valid-lifetime": 300,
+    "renew-timer": 150,
+    "rebind-timer": 225,
+
+# Next we set up the interfaces to be used by the server.
+    "interfaces-config": {
+        "interfaces": [ "eth1" ]
+    },
+
+# And we specify the type of lease database
+    "lease-database": {
+        "type": "memfile",
+        "persist": true,
+        "name": "/var/lib/kea/dhcp4.leases"
+    },
+
+# Finally, we list the subnets from which we will be leasing addresses.
+    "subnet4": [
+        {
+            "id": 1,
+            "subnet": "192.168.121.0/24",
+            "pools": [
+                {
+                    "pool": "192.168.121.50 - 192.168.121.150"
+                }
+            ],
+            "option-data": [
+	          { "name": "routers",              "data": "192.168.121.21" },
+	          { "name": "domain-name-servers",  "data": "192.168.121.21" },
+	          { "name": "domain-name",          "data": "lab.local" },
+	          { "name": "tftp-server-name",     "data": "192.168.121.21" }
+	        ]
+        }
+    ]
+# DHCPv4 configuration ends with the next line
+}
+
+}

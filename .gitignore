@@ -39,20 +39,7 @@ iso/
 # Optional secret config
 secrets/
 *.secret
-````
 
----
-
-### 🧩 Next Steps
-
-Once you finish `git init`, just:
-
-```bash
-cd ~/src/linux_tftp
-git add README.md .gitignore ops env.conf kea system tftpboot www
-git commit -m "Initial commit — Linux TFTP lab automation baseline"
-```
-
----
-
-Would you like me to generate a short **`docs/` reference stub** next (with examples of each script’s expected output and troubleshooting notes)? It’d serve as the foundation for project documentation on GitHub.
+# PXE boot binaries
+**/images/pxeboot/initrd.img
+**/images/pxeboot/vmlinuz

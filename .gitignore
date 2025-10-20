@@ -40,9 +40,11 @@ iso/
 secrets/
 *.secret
 
-# PXE boot binaries
-# PXE root binaries
-www/html/pxe/initrd.img
-www/html/pxe/vmlinuz
-**/images/pxeboot/initrd.img
-**/images/pxeboot/vmlinuz
+# PXE boot binary directories (don't traverse)
+www/html/*/*/images/pxeboot/
+www/html/pxe/
+
+# Large ISO-derived binaries (ignore even if symlinked)
+**/initrd.img
+**/vmlinuz
+

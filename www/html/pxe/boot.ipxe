@@ -1,0 +1,6 @@
+#!ipxe
+dhcp
+set base http://192.168.121.21/pxe
+kernel ${base}/vmlinuz inst.ks=${base}/ks.cfg ip=dhcp inst.repo=${base}
+initrd ${base}/initrd.img
+boot

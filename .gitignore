@@ -41,8 +41,13 @@ secrets/
 *.secret
 
 # PXE boot binary directories (don't traverse)
-www/html/*/*/images/pxeboot/
-www/html/pxe/
+html/*/*/images/pxeboot/
+html/pxe/
+
+# Allow control/config files inside PXE root
+!html/pxe/*.ipxe
+!html/pxe/*.cfg
+
 
 # Large ISO-derived binaries (ignore even if symlinked)
 **/initrd.img

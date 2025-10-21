@@ -43,6 +43,8 @@ secrets/
 # PXE boot binary directories (don't traverse)
 html/*/*/images/pxeboot/
 html/pxe/
+# Prevent Git from traversing ISO PXE trees
+html/*/*/images/pxeboot/
 
 # Allow control/config files inside PXE root
 !html/pxe/*.ipxe

@@ -19,6 +19,7 @@ set -euo pipefail
 SCRIPT_DIR="$(dirname "$0")"
 source "$SCRIPT_DIR/../env.conf"
 
+
 # --- Output helpers ----------------------------------------------------------
 BRIEF=0
 [[ "${1:-}" =~ ^(--brief|-b)$ ]] && BRIEF=1

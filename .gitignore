@@ -55,4 +55,6 @@ html/*/*/images/pxeboot/
 # Large ISO-derived binaries (ignore even if symlinked)
 **/initrd.img
 **/vmlinuz
+www/html/rocky/*/
+www/html/rhel/*/
 

@@ -145,60 +145,57 @@ for distro in "${!DISTRO_VERSIONS[@]}"; do
 done
 
 
-# --- 4. PXE/TFTP symlink verification ----------------------------------------
-log_section "PXE/TFTP SYMLINK VERIFICATION"
-info "Checking PXE/TFTP structure and symlinks..."
+# =============================================================================
+# PXE BOOT VALIDATION (Source-Driven)
+# Compares PXE-served binaries to their canonical copies from mounted ISOs.
+# =============================================================================
+log_section "PXE BOOT VALIDATION"
 
-if [[ -d "$TFTP_BASE" ]]; then
-  for distro in "${!DISTRO_VERSIONS[@]}"; do
-    for ver in ${DISTRO_VERSIONS[$distro]}; do
-      LINK="${TFTP_BASE}/${distro}/${ver}/images/pxeboot"
-      TARGET="${WWW_BASE}/${distro}/${ver}/images/pxeboot"
+for distro in "${!DISTRO_VERSIONS[@]}"; do
+  for ver in ${DISTRO_VERSIONS[$distro]}; do
+    PXE_PATH="${TFTP_BASE}/${distro}/${ver}/images/pxeboot"
+    SRC_PATH="${WWW_BASE}/${distro}/${ver}/images/pxeboot"
 
-      # --- Normalize paths ----------------------------------------------------
-      CLEAN_LINK="$(echo "$LINK" | sed 's://*:/:g')"
-      CLEAN_TARGET="$(echo "$TARGET" | sed 's://*:/:g')"
+    if [[ ! -d "$PXE_PATH" ]]; then
+      fail "Missing PXE directory: $PXE_PATH"
+      continue
+    fi
 
-      if [[ "$LINK" != "$CLEAN_LINK" || "$TARGET" != "$CLEAN_TARGET" ]]; then
-        warn "Double slash detected in PXE path:"
-        warn "  LINK:    $LINK"
-        warn "  TARGET:  $TARGET"
-        warn "  Suggested cleanup: check trailing slashes in env.conf or script concatenations."
+    info "Verifying PXE binaries for ${distro}-${ver}..."
+
+    for f in vmlinuz initrd.img; do
+      PXE_FILE="${PXE_PATH}/${f}"
+      SRC_FILE="${SRC_PATH}/${f}"
+
+      # Sanity: ensure both exist
+      if [[ ! -f "$SRC_FILE" ]]; then
+        fail "Source file missing: $SRC_FILE"
+        continue
+      fi
+      if [[ ! -f "$PXE_FILE" ]]; then
+        fail "PXE file missing: $PXE_FILE"
+        continue
       fi
 
-      LINK="$CLEAN_LINK"
-      TARGET="$CLEAN_TARGET"
+      PXE_SIZE=$(stat -c%s "$PXE_FILE")
+      SRC_SIZE=$(stat -c%s "$SRC_FILE")
 
-      # --- Resolve link and sanitize strings ---------------------------------
-      RESOLVED="$(realpath -e "$LINK" 2>/dev/null || readlink -f "$LINK" || echo "$LINK")"
-      RESOLVED="${RESOLVED%/}"
-      TARGET="${TARGET%/}"
-      RESOLVED="${RESOLVED//[[:space:]]/}"
-      TARGET="${TARGET//[[:space:]]/}"
-
-      # --- Compare results ----------------------------------------------------
-      if [[ -L "$LINK" ]]; then
-        if [[ "$RESOLVED" == "$TARGET" ]]; then
-          pass "PXE symlink valid for ${distro}-${ver} → $RESOLVED"
-        elif [[ "$RESOLVED" == "$TARGET"* ]]; then
-          warn "PXE symlink for ${distro}-${ver} resolves deeper than expected:"
-          echo "  RESOLVED: $RESOLVED"
-          echo "  EXPECTED: $TARGET"
-        else
-          warn "PXE symlink for ${distro}-${ver} points to unexpected target:"
-          echo "  RESOLVED: $RESOLVED"
-          echo "  EXPECTED: $TARGET"
-        fi
-      elif [[ -d "$LINK" ]]; then
-        warn "PXE path for ${distro}-${ver} is a directory, not a symlink."
+      if (( PXE_SIZE == SRC_SIZE )); then
+        pass "$(printf "%-50s" "$f") OK (${PXE_SIZE} bytes)"
       else
-        fail "PXE symlink missing: $LINK"
+        warn "$(printf "%-50s" "$f") size mismatch (PXE=${PXE_SIZE}, ISO=${SRC_SIZE})"
+      fi
+
+      # Optional: deeper validation — checksum compare (fast, non-blocking)
+      PXE_SUM=$(sha1sum "$PXE_FILE" | awk '{print $1}')
+      SRC_SUM=$(sha1sum "$SRC_FILE" | awk '{print $1}')
+      if [[ "$PXE_SUM" != "$SRC_SUM" ]]; then
+        warn "Checksum mismatch: ${f} (PXE vs ISO)"
       fi
     done
   done
-else
-  fail "PXE root directory missing: $TFTP_BASE"
-fi
+done
+
 
 # --- 5. KEA configuration verification ---------------------------------------
 log_section "KEA CONFIGURATION CHECK"

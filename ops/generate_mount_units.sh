@@ -6,13 +6,36 @@
 # and remove obsolete ones no longer referenced.
 # =============================================================================
 
+#!/bin/bash
+# =============================================================================
+# Standard Ops Script Header
+# Ensures consistent environment, prevents stale variable reuse, and
+# dynamically locates env.conf regardless of where the script is executed.
+# =============================================================================
 set -euo pipefail
-SCRIPT_DIR="$(dirname "$0")"
-source "$SCRIPT_DIR/../env.conf"
 
-SYSTEMD_DIR="/etc/systemd/system"
-ISO_BASE="/home/nvuser/iso"
-WWW_BASE="/var/www/rhel"
+# --- Prevent stale or legacy variables from interfering ---------------------
+unset WWW_BASE PXE_ROOT WWW_ROOT TFTP_BASE
+
+# --- Resolve this script's directory ----------------------------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# --- Load shared environment configuration ----------------------------------
+if [[ -f "$SCRIPT_DIR/../env.conf" ]]; then
+  # shellcheck disable=SC1091
+  source "$SCRIPT_DIR/../env.conf"
+else
+  echo "[FATAL] env.conf not found at expected path: $SCRIPT_DIR/../env.conf" >&2
+  exit 1
+fi
+
+source "$SCRIPT_DIR/common.sh"
+
+# --- Optional: display loaded environment for debugging ---------------------
+# echo "[DEBUG] Environment loaded:"
+# echo "  WWW_BASE=$WWW_BASE"
+# echo "  TFTP_BASE=$TFTP_BASE"
+# echo "  ISO_DIR=$ISO_DIR"
 
 echo "=== Generating mount and automount units in $SYSTEMD_DIR ==="
 

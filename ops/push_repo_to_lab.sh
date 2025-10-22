@@ -6,9 +6,37 @@
 # Ensures correct ownership and permissions on destination.
 # =============================================================================
 
+#!/bin/bash
+# =============================================================================
+# Standard Ops Script Header
+# Ensures consistent environment, prevents stale variable reuse, and
+# dynamically locates env.conf regardless of where the script is executed.
+# =============================================================================
 set -euo pipefail
-SCRIPT_DIR="$(dirname "$0")"
-source "$SCRIPT_DIR/../env.conf"
+
+# --- Prevent stale or legacy variables from interfering ---------------------
+unset WWW_BASE PXE_ROOT WWW_ROOT TFTP_BASE
+
+# --- Resolve this script's directory ----------------------------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# --- Load shared environment configuration ----------------------------------
+if [[ -f "$SCRIPT_DIR/../env.conf" ]]; then
+  # shellcheck disable=SC1091
+  source "$SCRIPT_DIR/../env.conf"
+else
+  echo "[FATAL] env.conf not found at expected path: $SCRIPT_DIR/../env.conf" >&2
+  exit 1
+fi
+
+source "$SCRIPT_DIR/common.sh"
+
+# --- Optional: display loaded environment for debugging ---------------------
+# echo "[DEBUG] Environment loaded:"
+# echo "  WWW_BASE=$WWW_BASE"
+# echo "  TFTP_BASE=$TFTP_BASE"
+# echo "  ISO_DIR=$ISO_DIR"
+
 
 EXCLUDE_FILE="$REPO_BASE/.rsync-exclude"
 RSYNC_OPTS="-avh --delete --exclude-from=$EXCLUDE_FILE"

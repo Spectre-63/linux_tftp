@@ -13,27 +13,48 @@
 #   --brief | -b   → concise output (only FAIL/WARN)
 # =============================================================================
 
+#!/bin/bash
+# =============================================================================
+# Standard Ops Script Header
+# Ensures consistent environment, prevents stale variable reuse, and
+# dynamically locates env.conf regardless of where the script is executed.
+# =============================================================================
 set -euo pipefail
 
-# --- Source environment configuration ----------------------------------------
-SCRIPT_DIR="$(dirname "$0")"
-source "$SCRIPT_DIR/../env.conf"
+# --- Prevent stale or legacy variables from interfering ---------------------
+unset WWW_BASE PXE_ROOT WWW_ROOT TFTP_BASE
 
+# --- Resolve this script's directory ----------------------------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# --- Output helpers ----------------------------------------------------------
-BRIEF=0
-[[ "${1:-}" =~ ^(--brief|-b)$ ]] && BRIEF=1
+# --- Load shared environment configuration ----------------------------------
+if [[ -f "$SCRIPT_DIR/../env.conf" ]]; then
+  # shellcheck disable=SC1091
+  source "$SCRIPT_DIR/../env.conf"
+else
+  echo "[FATAL] env.conf not found at expected path: $SCRIPT_DIR/../env.conf" >&2
+  exit 1
+fi
 
-pass() { [[ $BRIEF -eq 0 ]] && echo -e "\e[32m[PASS]\e[0m $1"; }
-fail() { echo -e "\e[31m[FAIL]\e[0m $1"; FAILED=1; }
-warn() { echo -e "\e[33m[WARN]\e[0m $1"; }
-info() { [[ $BRIEF -eq 0 ]] && echo -e "\e[34m[INFO]\e[0m $1"; }
+source "$SCRIPT_DIR/common.sh"
 
 FAILED=0
 
+fail() {
+  should_log error && echo -e "$(timestamp)  \033[1;31m[FAIL]\033[0m  $*"
+  ((FAILED++))
+}
+
+# --- Optional: display loaded environment for debugging ---------------------
+# echo "[DEBUG] Environment loaded:"
+# echo "  WWW_BASE=$WWW_BASE"
+# echo "  TFTP_BASE=$TFTP_BASE"
+# echo "  ISO_DIR=$ISO_DIR"
+# --- Runtime options ---------------------------------------------------------
+# Controls verbosity (1 = only warnings/failures, 0 = full output)
+BRIEF=${BRIEF:-0}
+
 # --- Path definitions --------------------------------------------------------
-WWW_BASE="/var/www/rhel"
-PXE_ROOT="/var/lib/tftpboot"
 ISO_DIR="$ISO_DIR"
 KEA_SYS_DIR="$KEA_SYS_DIR"
 KEA_REPO_DIR="$KEA_REPO_DIR"
@@ -42,78 +63,145 @@ echo "=== Sanity Check Report ($(date '+%Y-%m-%d %H:%M:%S')) ==="
 [[ $BRIEF -eq 1 ]] && echo "(brief mode: only failures and warnings shown)"
 echo
 
-# --- 1. Detect and validate systemd units ------------------------------------
-info "Detecting var-www-rhel-* units..."
-mapfile -t UNITS < <(systemctl list-unit-files 'var-www-rhel-*' --no-legend 2>/dev/null | awk '{print $1}' | sort)
+
+# =============================================================================
+# 1. SYSTEMD UNIT AND AUTOMOUNT VALIDATION (multi-distro aware)
+# =============================================================================
+log_section "SYSTEMD UNIT AND AUTOMOUNT VALIDATION"
+
+info "Detecting var-www-*-*.mount units..."
+mapfile -t UNITS < <(
+  systemctl list-unit-files 'var-www-*-*.mount' --no-legend 2>/dev/null | awk '{print $1}' | sort || true
+)
 
 if [[ ${#UNITS[@]} -eq 0 ]]; then
-  fail "No var-www-rhel-* units found. Did you run generate_mount_units.sh?"
+  fail "No var-www-*-*.mount units found. Did you run generate_mount_units.sh?"
 else
   for u in "${UNITS[@]}"; do
-    if [[ "$u" == *.mount ]]; then
-      ver="${u#var-www-rhel-}"
-      ver="${ver%.mount}"
-      MOUNTPOINT="${WWW_BASE}/${ver}"
-      if [[ -d "$MOUNTPOINT" ]]; then
-        pass "Mount directory exists: $MOUNTPOINT"
+    # Expected patterns:
+    #   var-www-rhel-9.mount   → distro=rhel, ver=9
+    #   var-www-rocky-10.mount → distro=rocky, ver=10
+    unit_clean="${u%.mount}"             # remove .mount
+    unit_clean="${unit_clean#var-www-}"  # strip leading var-www-
+    distro="${unit_clean%%-*}"           # part before first '-'
+    ver="${unit_clean#${distro}-}"       # remainder after distro-
+    MOUNTPOINT="${WWW_BASE}/${distro}/${ver}"
+
+    if [[ -d "$MOUNTPOINT" ]]; then
+      pass "Mount directory exists: $MOUNTPOINT"
+    else
+      fail "Mount directory missing: $MOUNTPOINT"
+    fi
+
+    # --- Check for matching .automount unit ---------------------------------
+    auto_unit="${u%.mount}.automount"
+    if systemctl list-unit-files "$auto_unit" --no-legend 2>/dev/null | grep -q "$auto_unit"; then
+      if systemctl is-enabled "$auto_unit" &>/dev/null; then
+        pass "Automount unit present and enabled: $auto_unit"
       else
-        fail "Mount directory missing: $MOUNTPOINT"
+        warn "Automount unit exists but is not enabled: $auto_unit"
       fi
+    else
+      warn "No matching automount unit found for $u"
     fi
   done
 fi
 
-# --- 2. Check automount status -----------------------------------------------
+# --- Check currently active automounts --------------------------------------
 info "Checking automount status..."
-mapfile -t ACTIVE_AUTOMOUNTS < <(systemctl list-units --type=automount --state=active | grep var-www-rhel- || true)
+mapfile -t ACTIVE_AUTOMOUNTS < <(
+  systemctl list-units --type=automount --state=active 2>/dev/null | grep 'var-www-' || true
+)
+
 if [[ ${#ACTIVE_AUTOMOUNTS[@]} -gt 0 ]]; then
-  pass "Active automounts detected."
+  pass "Active automounts detected (${#ACTIVE_AUTOMOUNTS[@]} total)."
 else
   warn "No active automounts found. Run ./enable_all_mounts.sh to activate."
 fi
 
-# --- 3. Verify mount accessibility -------------------------------------------
-info "Testing mount accessibility..."
-for d in "$WWW_BASE"/*; do
-  [[ -d "$d" ]] || continue
-  ver=$(basename "$d")
-  if sudo ls "$d" >/dev/null 2>&1; then
-    if mount | grep -q "$d"; then
-      pass "Mount $ver accessible and active."
-    else
-      warn "Mount $ver accessible but not listed in mount table (idle/unmounted)."
-    fi
-  else
-    fail "Cannot access $d (permissions or missing mount)."
-  fi
-done
 
-# --- 4. PXE/TFTP symlink verification ----------------------------------------
-info "Checking PXE/TFTP structure and symlinks..."
-if [[ -d "$PXE_ROOT" ]]; then
-  for ver_dir in "$PXE_ROOT"/*; do
-    [[ -d "$ver_dir" ]] || continue
-    ver=$(basename "$ver_dir")
-    LINK="${ver_dir}/images/pxeboot"
-    TARGET="${WWW_BASE}/${ver}/images/pxeboot"
-    if [[ -L "$LINK" ]]; then
-      RESOLVED="$(readlink -f "$LINK")"
-      if [[ "$RESOLVED" == "$TARGET" ]]; then
-        pass "PXE symlink valid for $ver → $RESOLVED"
+# --- 3. Mount accessibility check ----------------------------------------
+log_section "MOUNT ACCESSIBILITY CHECK"
+
+info "Testing mount accessibility..."
+for distro in "${!DISTRO_VERSIONS[@]}"; do
+  for ver in ${DISTRO_VERSIONS[$distro]}; do
+    MOUNT_PATH="${WWW_BASE}/${distro}/${ver}"
+
+    if [[ -d "$MOUNT_PATH" ]]; then
+      if sudo ls "$MOUNT_PATH" >/dev/null 2>&1; then
+        if mountpoint -q "$MOUNT_PATH"; then
+          pass "Mount active and accessible: $MOUNT_PATH"
+        else
+          warn "Mount exists but not active: $MOUNT_PATH"
+        fi
       else
-        warn "PXE symlink for $ver points to wrong target: $RESOLVED"
+        fail "Cannot access $MOUNT_PATH (permissions or missing mount)."
       fi
-    elif [[ -d "$LINK" ]]; then
-      warn "PXE path for $ver is a directory, not a symlink."
     else
-      fail "PXE symlink missing: $LINK"
+      fail "Mount directory missing: $MOUNT_PATH"
     fi
   done
+done
+
+
+# --- 4. PXE/TFTP symlink verification ----------------------------------------
+log_section "PXE/TFTP SYMLINK VERIFICATION"
+info "Checking PXE/TFTP structure and symlinks..."
+
+if [[ -d "$TFTP_BASE" ]]; then
+  for distro in "${!DISTRO_VERSIONS[@]}"; do
+    for ver in ${DISTRO_VERSIONS[$distro]}; do
+      LINK="${TFTP_BASE}/${distro}/${ver}/images/pxeboot"
+      TARGET="${WWW_BASE}/${distro}/${ver}/images/pxeboot"
+
+      # --- Normalize paths ----------------------------------------------------
+      CLEAN_LINK="$(echo "$LINK" | sed 's://*:/:g')"
+      CLEAN_TARGET="$(echo "$TARGET" | sed 's://*:/:g')"
+
+      if [[ "$LINK" != "$CLEAN_LINK" || "$TARGET" != "$CLEAN_TARGET" ]]; then
+        warn "Double slash detected in PXE path:"
+        warn "  LINK:    $LINK"
+        warn "  TARGET:  $TARGET"
+        warn "  Suggested cleanup: check trailing slashes in env.conf or script concatenations."
+      fi
+
+      LINK="$CLEAN_LINK"
+      TARGET="$CLEAN_TARGET"
+
+      # --- Resolve link and sanitize strings ---------------------------------
+      RESOLVED="$(realpath -e "$LINK" 2>/dev/null || readlink -f "$LINK" || echo "$LINK")"
+      RESOLVED="${RESOLVED%/}"
+      TARGET="${TARGET%/}"
+      RESOLVED="${RESOLVED//[[:space:]]/}"
+      TARGET="${TARGET//[[:space:]]/}"
+
+      # --- Compare results ----------------------------------------------------
+      if [[ -L "$LINK" ]]; then
+        if [[ "$RESOLVED" == "$TARGET" ]]; then
+          pass "PXE symlink valid for ${distro}-${ver} → $RESOLVED"
+        elif [[ "$RESOLVED" == "$TARGET"* ]]; then
+          warn "PXE symlink for ${distro}-${ver} resolves deeper than expected:"
+          echo "  RESOLVED: $RESOLVED"
+          echo "  EXPECTED: $TARGET"
+        else
+          warn "PXE symlink for ${distro}-${ver} points to unexpected target:"
+          echo "  RESOLVED: $RESOLVED"
+          echo "  EXPECTED: $TARGET"
+        fi
+      elif [[ -d "$LINK" ]]; then
+        warn "PXE path for ${distro}-${ver} is a directory, not a symlink."
+      else
+        fail "PXE symlink missing: $LINK"
+      fi
+    done
+  done
 else
-  fail "PXE root directory missing: $PXE_ROOT"
+  fail "PXE root directory missing: $TFTP_BASE"
 fi
 
 # --- 5. KEA configuration verification ---------------------------------------
+log_section "KEA CONFIGURATION CHECK"
 info "Checking KEA configuration and repo sync..."
 
 if [[ -d "$KEA_SYS_DIR" ]]; then
@@ -153,6 +241,7 @@ for f in kea-dhcp4.conf kea-dhcp6.conf kea-ctrl-agent.conf; do
 done
 
 # --- 6. Ownership verification -----------------------------------------------
+log_section "OWNERSHIP VALIDATION"
 info "Checking KEA ownership consistency..."
 USER_NAME=$(whoami)
 USER_GROUP=$(id -gn)
@@ -183,6 +272,7 @@ else
 fi
 
 # --- 7. SELinux context check ------------------------------------------------
+log_section "SELINUX CONTEXT CHECK"
 info "Checking SELinux context..."
 if command -v getenforce >/dev/null 2>&1; then
   MODE=$(getenforce)
@@ -202,11 +292,11 @@ fi
 
 # --- 8. Summary --------------------------------------------------------------
 echo
-if [[ $FAILED -eq 0 ]]; then
-  echo -e "\e[32mAll checks passed.\e[0m"
-else
-  echo -e "\e[31mOne or more checks failed. Review output above.\e[0m"
-fi
+hr
+echo "Checks complete – total failures: $FAILED"
+((FAILED == 0)) && echo -e "\e[32mAll checks passed.\e[0m" || echo -e "\e[31mSome checks failed.\e[0m"
+
+
 
 # =============================================================================
 # TEMPLATE: Extending Sanity Checks

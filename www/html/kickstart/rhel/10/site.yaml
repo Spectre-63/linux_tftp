@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Set timezone
+      command: timedatectl set-timezone America/Boise
+    - name: Ensure common packages
+      dnf:
+        name: [htop, tmux, net-tools]
+        state: present
+    - name: Create lab banner
+      copy:
+        dest: /etc/issue.d/lab.conf
+        content: "Lab node managed by Ansible\n"
+

@@ -37,7 +37,7 @@ source "$SCRIPT_DIR/common.sh"
 # echo "  ISO_DIR=$ISO_DIR"
 
 for ver in "${RHEL_VERSIONS[@]}"; do
-  MOUNT_PATH="/var/www/rhel/${ver}"
+  MOUNT_PATH="/var/www/html/rhel/${ver}"
   UNIT_NAME=$(systemd-escape -p --suffix=automount "$MOUNT_PATH")
 
   echo "→ Enabling and starting ${UNIT_NAME}"

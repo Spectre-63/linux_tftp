@@ -43,6 +43,7 @@ secrets/
 # PXE boot binary directories (don't traverse)
 html/*/*/images/pxeboot/
 html/pxe/
+html/kickstart/
 # Prevent Git from traversing ISO PXE trees
 html/*/*/images/pxeboot/
 

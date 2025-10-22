@@ -1,0 +1,205 @@
+{
+    "data": [
+        {
+            "checksums": {
+                "md5": "56aff20881d67907845fc18246c5cf76",
+                "sha1": "5ffeffe6fc0b8e69f9fd915625eca112ccea0741",
+                "sha256": "b4d44de37cc1c1fe974700317d41a2b9eae58b23662fc4882a43adbd539727e5"
+            },
+            "file": ".discinfo",
+            "size": 59
+        },
+        {
+            "checksums": {
+                "md5": "0c53898068810a989fa59ca0656bdf24",
+                "sha1": "42d51858642b8a0d10fdf09050266395544ea556",
+                "sha256": "8f833ce3fbcbcb82e47687a890c043332c88350ddabd606201556e14aaf8fcd9"
+            },
+            "file": "EULA",
+            "size": 8154
+        },
+        {
+            "checksums": {
+                "md5": "78ff23226b1227f1f8fa33a14d85eaac",
+                "sha1": "c9e86a587dda0aacc8042a400bf7f6f00c3c2b68",
+                "sha256": "3fadaa32dce35516f69992674bec4b27ab9d3f972afefb9e4a57294264f49491"
+            },
+            "file": "Flatpaks/blobs/sha256/3fadaa32dce35516f69992674bec4b27ab9d3f972afefb9e4a57294264f49491",
+            "size": 415
+        },
+        {
+            "checksums": {
+                "md5": "82eccb6ce04a70545dd57cb53aafd45d",
+                "sha1": "706840aa6813591bb92d100302a4d60c1443dc41",
+                "sha256": "407baa743907cdc07207b117c05226d5b490fa2693ba1cec40cb33de14da3f31"
+            },
+            "file": "Flatpaks/blobs/sha256/407baa743907cdc07207b117c05226d5b490fa2693ba1cec40cb33de14da3f31",
+            "size": 884
+        },
+        {
+            "checksums": {
+                "md5": "d94068a465b82aa8f92fe9c4eb752233",
+                "sha1": "bec83404983de18b029dcd9f89f0c9985e8326fa",
+                "sha256": "47ef902ab2f1eb1c3b98f51330106822577c699f62a5f1ca7fdf4e639c6e1a61"
+            },
+            "file": "Flatpaks/blobs/sha256/47ef902ab2f1eb1c3b98f51330106822577c699f62a5f1ca7fdf4e639c6e1a61",
+            "size": 375
+        },
+        {
+            "checksums": {
+                "md5": "a8bbf38ee986a02f4853cb3659857003",
+                "sha1": "b87249e7447a44147e7d6181be718e34e4e229c6",
+                "sha256": "8a04e7d204c479bbf46c09ca91fa38ebfb491d8f4b3202a772ff22694c908f5e"
+            },
+            "file": "Flatpaks/blobs/sha256/8a04e7d204c479bbf46c09ca91fa38ebfb491d8f4b3202a772ff22694c908f5e",
+            "size": 378
+        },
+        {
+            "checksums": {
+                "md5": "26bef5baf1911626218d30353b4886ce",
+                "sha1": "7e6b34f2cbc6daa119faa61ae50e6f611b3d3e8b",
+                "sha256": "8afe83ba4be340c9215012ae1b816d7cb730edf8a3c24f4f73c20df2ba106327"
+            },
+            "file": "Flatpaks/blobs/sha256/8afe83ba4be340c9215012ae1b816d7cb730edf8a3c24f4f73c20df2ba106327",
+            "size": 149246546
+        },
+        {
+            "checksums": {
+                "md5": "864a0decb7beb354017a63e934a8be10",
+                "sha1": "ac0193c436b846125f0b13aae5092893fe4d4524",
+                "sha256": "8b65c3657cf38b81803df84585f27f742a33f3ce8410a3b074cd412b3d7bcab3"
+            },
+            "file": "Flatpaks/blobs/sha256/8b65c3657cf38b81803df84585f27f742a33f3ce8410a3b074cd412b3d7bcab3",
+            "size": 163909244
+        },
+        {
+            "checksums": {
+                "md5": "0de0975558200a57a120f3a2bce1a6aa",
+                "sha1": "0ae605990f06cd6feb46d21386fe8e8922c35176",
+                "sha256": "8e8542d5727417905176b357e85a890c793d46b131cc78d8ede30aaf788089b6"
+            },
+            "file": "Flatpaks/blobs/sha256/8e8542d5727417905176b357e85a890c793d46b131cc78d8ede30aaf788089b6",
+            "size": 885
+        },
+        {
+            "checksums": {
+                "md5": "2339ea7800f4721994d9fb967cf91b37",
+                "sha1": "543429df666177323ceec6fd88edd38034873717",
+                "sha256": "bd9ddc54bea929a22b334e73e026d4136e5b73f5cc29942896c72e4ece69b13d"
+            },
+            "file": "Flatpaks/blobs/sha256/bd9ddc54bea929a22b334e73e026d4136e5b73f5cc29942896c72e4ece69b13d",
+            "size": 34
+        },
+        {
+            "checksums": {
+                "md5": "b4bc6f10a558028eb90846dd2beb7911",
+                "sha1": "f1e3280ecad9503c83b4c42ae1a61090e1ce290b",
+                "sha256": "c72ab2c22fbf3dcd998dd7b9b7ff9050cb07ff50ac590072c4b45b6a60530487"
+            },
+            "file": "Flatpaks/blobs/sha256/c72ab2c22fbf3dcd998dd7b9b7ff9050cb07ff50ac590072c4b45b6a60530487",
+            "size": 5993
+        },
+        {
+            "checksums": {
+                "md5": "5e39491d30b59a8e57176bd3dcb1937f",
+                "sha1": "0cfa65da75196d4b0a65e663afda7469384f66e1",
+                "sha256": "d943f726b8ed9717b84500f5c58a9823e25d0951bc98216c22bc4ae50739079b"
+            },
+            "file": "Flatpaks/blobs/sha256/d943f726b8ed9717b84500f5c58a9823e25d0951bc98216c22bc4ae50739079b",
+            "size": 290
+        },
+        {
+            "checksums": {
+                "md5": "232a2433f7ddfdf6cd87fef46e0fe802",
+                "sha1": "a5b6266454350d64b3be9be8b60fc9112dd20a16",
+                "sha256": "ef1787684f6a1ddaefb5c6ba6dfceb4f7ceaef2e4aad08137a56d81fb6b3ac26"
+            },
+            "file": "Flatpaks/blobs/sha256/ef1787684f6a1ddaefb5c6ba6dfceb4f7ceaef2e4aad08137a56d81fb6b3ac26",
+            "size": 3914
+        },
+        {
+            "checksums": {
+                "md5": "1244d64fbf7e27065aba7544cffb1fd1",
+                "sha1": "21d8311247d3ca5926d0d2c4daf72ea6332d5b10",
+                "sha256": "f880eb02707377befc14329a593277e1df4bc374b4c326c5fff5f992990dec73"
+            },
+            "file": "Flatpaks/blobs/sha256/f880eb02707377befc14329a593277e1df4bc374b4c326c5fff5f992990dec73",
+            "size": 885
+        },
+        {
+            "checksums": {
+                "md5": "dbf486504be3e2cac2f80d09378f058e",
+                "sha1": "5379b6748d9674a18347d7d2203b3c814a18ce5b",
+                "sha256": "f9f35383545554c6a89bbaab6d6899d73f3d8daef9a1d84b224e8f9e43ca0fb4"
+            },
+            "file": "Flatpaks/blobs/sha256/f9f35383545554c6a89bbaab6d6899d73f3d8daef9a1d84b224e8f9e43ca0fb4",
+            "size": 470214100
+        },
+        {
+            "checksums": {
+                "md5": "1f7fd6a8e66589375b49104fa1e15827",
+                "sha1": "4a4499168fbf2294d447018973216abe9ce55f09",
+                "sha256": "fcc86ba453e050e32e89c7c6186fc874ebd86a3d310841f059402ba6740266f2"
+            },
+            "file": "Flatpaks/blobs/sha256/fcc86ba453e050e32e89c7c6186fc874ebd86a3d310841f059402ba6740266f2",
+            "size": 37080
+        },
+        {
+            "checksums": {
+                "md5": "add8e8b3707f0680cbd6da969d581252",
+                "sha1": "db683760b945c95bfc01109b2fbc03fdc835eccc",
+                "sha256": "cc98f4cd22e01b6f3661b9a4f8d81f724dfad4ce81a7694a3e77183745946fdb"
+            },
+            "file": "Flatpaks/index.json",
+            "size": 492
+        },
+        {
+            "checksums": {
+                "md5": "8fe457e59221bb18c7d11fa5bb7ba6c9",
+                "sha1": "bd16f33d08f61185746f95d39f904c88dfa38a9f",
+                "sha256": "18f0797eab35a4597c1e9624aa4f15fd91f6254e5538c1e0d193b2a95dd4acc6"
+            },
+            "file": "Flatpaks/oci-layout",
+            "size": 30
+        },
+        {
+            "checksums": {
+                "md5": "b234ee4d69f5fce4486a80fdaf4a4263",
+                "sha1": "4cc77b90af91e615a64ae04893fdffa7939db84c",
+                "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+            },
+            "file": "GPL",
+            "size": 18092
+        },
+        {
+            "checksums": {
+                "md5": "a1668de31a0de825a69f620c8469e83c",
+                "sha1": "c2202f022adc3b8050e5d20fcbe5fbc1a8bf0dda",
+                "sha256": "7e28fbd6022d0560e95264c435f52617655901435954019b67889bfa378a0870"
+            },
+            "file": "RPM-GPG-KEY-redhat-beta",
+            "size": 1670
+        },
+        {
+            "checksums": {
+                "md5": "2fa488949d7a37f1db2433ee9cd90333",
+                "sha1": "6fe6653e41b69379e07fd0b9bc3ec1c8a03a0129",
+                "sha256": "1cba875844f7f798acc5dfdb5ce27f29361f9f0553c4830a5e05271f66bc5116"
+            },
+            "file": "RPM-GPG-KEY-redhat-release",
+            "size": 3814
+        },
+        {
+            "checksums": {
+                "md5": "ff9a1c99b0ee8b60a1574848ba8e069e",
+                "sha1": "528497ce8f1e57ecf07c970b93ade26b3515ee30",
+                "sha256": "a5c7b9c4140af95db4c3c6e0dc0ec3678acac2477ea24a68066e929d61dce38d"
+            },
+            "file": "media.repo",
+            "size": 102
+        }
+    ],
+    "header": {
+        "version": "1.0"
+    }
+}

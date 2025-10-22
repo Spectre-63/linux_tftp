@@ -1,0 +1,9 @@
+Rocky Linux EULA
+
+Rocky Linux comes with no warranties or guarantees of any kind, written or
+implied.
+
+The Distribution is released as 3-Clause BSD. Individual packages in the
+distribution come with their own licenses which are available on install as well
+as the distribution git forge. A copy of the 3-Clause BSD license is included
+with the media of this distribution.

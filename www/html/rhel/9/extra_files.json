@@ -1,0 +1,61 @@
+{
+    "data": [
+        {
+            "checksums": {
+                "md5": "6a64e149bb401ab195e3a933a5c9d869",
+                "sha1": "2529730e1b3749c0099b4c0a5cfb754e30aa7fc3",
+                "sha256": "5ba5c6b0bad5804a1e2a9734753addb556e20131c63ef616ba7d235b559545ef"
+            },
+            "file": ".discinfo",
+            "size": 60
+        },
+        {
+            "checksums": {
+                "md5": "0c53898068810a989fa59ca0656bdf24",
+                "sha1": "42d51858642b8a0d10fdf09050266395544ea556",
+                "sha256": "8f833ce3fbcbcb82e47687a890c043332c88350ddabd606201556e14aaf8fcd9"
+            },
+            "file": "EULA",
+            "size": 8154
+        },
+        {
+            "checksums": {
+                "md5": "b234ee4d69f5fce4486a80fdaf4a4263",
+                "sha1": "4cc77b90af91e615a64ae04893fdffa7939db84c",
+                "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+            },
+            "file": "GPL",
+            "size": 18092
+        },
+        {
+            "checksums": {
+                "md5": "3c24137e12ece142a27bbf825c256936",
+                "sha1": "a72daf8585b41529269cdffcca3a0b3d4e2f21cd",
+                "sha256": "3f8644b35db4197e7689d0a034bdef2039d92e330e6b22217abfa6b86a1fc0fa"
+            },
+            "file": "RPM-GPG-KEY-redhat-beta",
+            "size": 1669
+        },
+        {
+            "checksums": {
+                "md5": "1e83f2a9bc2a0916cb20c250b7597db7",
+                "sha1": "9333c0a06770787f21a1fe9f7c17484cfbd3a818",
+                "sha256": "0db3dc1b6228f29d60f37c5ad91d9f4cd3547895e8ebedb242469b1c0a0cdf08"
+            },
+            "file": "RPM-GPG-KEY-redhat-release",
+            "size": 3682
+        },
+        {
+            "checksums": {
+                "md5": "15fa340fb83d24c8123c691493698c5d",
+                "sha1": "03c2d4bc3402f17539c3404a7c5f5ddc1d89e010",
+                "sha256": "c4033bc004b7e0643b43cfc9f0e1474cf7c525839cad5aa2f30beb9caf2eb651"
+            },
+            "file": "media.repo",
+            "size": 103
+        }
+    ],
+    "header": {
+        "version": "1.0"
+    }
+}

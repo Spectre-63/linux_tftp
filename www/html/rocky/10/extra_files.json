@@ -1,0 +1,56 @@
+{
+    "data": [
+        {
+            "checksums": {
+                "sha256": "b98ff9b71738d18fa4e866e1f65031740f1277759dd4c35f5be25dfdcda75f07"
+            },
+            "file": ".discinfo",
+            "size": 46
+        },
+        {
+            "checksums": {
+                "sha256": "7c3cf3175ae91ef79b54e3e743a1ab190fc83a8c76a5f9819372d80b6fe8fd84"
+            },
+            "file": "COMMUNITY-CHARTER",
+            "size": 5504
+        },
+        {
+            "checksums": {
+                "sha256": "8cf68ce19b0aeead2732493eda8182fd14ebe44887d898b6d8437173cf054867"
+            },
+            "file": "EULA",
+            "size": 372
+        },
+        {
+            "checksums": {
+                "sha256": "3b8195ec0c7a1e901495f554412620de59ba584b70f7cb53ca6eaab2068941d5"
+            },
+            "file": "LICENSE",
+            "size": 2204
+        },
+        {
+            "checksums": {
+                "sha256": "be8c4f070b696e64d8ce40e59a95a57e8b5c776f0015c2fd64e14b896622bdb4"
+            },
+            "file": "RPM-GPG-KEY-Rocky-10",
+            "size": 1688
+        },
+        {
+            "checksums": {
+                "sha256": "3df6ae83a66b5949e8a33c3b969a8e82a6d3167ff368528a0a771db8bb531129"
+            },
+            "file": "RPM-GPG-KEY-Rocky-10-Testing",
+            "size": 1700
+        },
+        {
+            "checksums": {
+                "sha256": "6c0a91cd82267a97c808a40478e4b0b29ffa51a10692b0ed623148c1b485b73f"
+            },
+            "file": "media.repo",
+            "size": 89
+        }
+    ],
+    "header": {
+        "version": "1.0"
+    }
+}
